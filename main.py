@@ -69,30 +69,6 @@ class NameSilo:
         content = xmltodict.parse(api_request.content.decode())
         return content
 
-    def check_domain(self, domain_name: str):
-        """
-        Check if domain name is available
-        :param domain_name:
-        :return:
-        """
-        url_extend = "checkRegisterAvailability?version=1&type=xml&key=%s&domains=%s" % (self.__token, domain_name)
-        parsed_content = self.__get_content_xml(url_extend)
-        check_error_code(self.__get_error_code(parsed_content))
-        if 'available' in parsed_content['namesilo']['reply'].keys():
-            return True
-        else:
-            return False
-
-    def get_domain_info(self, domain_name: str):
-        """
-        Returns information about specified domain
-        :param domain_name:
-        :return: DomainInfo model from common.models
-        """
-        url_extend = "getDomainInfo?version=1&type=xml&key=%s&domain=%s" % (self.__token, domain_name)
-        parsed_content = self.__get_content_xml(url_extend)
-        check_error_code(self.__get_error_code(parsed_content))
-        return DomainInfo(parsed_content)
 
     def list_domains(self):
         """
