@@ -1,7 +1,6 @@
-import os
-
 import requests
 import xmltodict
+from urllib.parse import urljoin
 
 from core.token import get_token
 from .models import APIResponse
@@ -30,7 +29,7 @@ class BaseAPIWrapper:
 		api_response = APIResponse()
 
 		try:
-			api_request = requests.get(os.path.join(self.__base_url, url))
+			api_request = requests.get(urljoin(self.__base_url, url))
 
 			api_response.status_code = api_request.status_code
 			api_response.content = api_request.content
