@@ -15,7 +15,6 @@ class DomainService:
 
         return available_domains, unavailable_domains, invalid_domains
 
-
     def check_availability(self, domain):
         domain_available = False
 

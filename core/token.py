@@ -4,14 +4,14 @@ token = None
 
 
 def get_token():
-	global token
+    global token
 
-	if not token:
-		try:
-			token = os.environ["NAMESILO_TOKEN"]
+    if not token:
+        try:
+            token = os.environ["NAMESILO_TOKEN"]
 
-		except:
-			raise
+        except:
+            raise
 
-		finally:
-			return token
+        finally:
+            return token
