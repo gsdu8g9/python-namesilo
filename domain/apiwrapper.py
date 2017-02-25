@@ -8,6 +8,10 @@ class DomainAPIWrapper(BaseAPIWrapper):
     def check_availability(self, domains):
         url_suffix = "checkRegisterAvailability?version=1&type=xml&key=%s&domains=%s" % (self.token, domains)
 
-        response = self.get(url_suffix)
+        return self.get(url_suffix)
 
-        return response
+    def register_domain(self, domain, years, private, auto_renew):
+        url_suffix = "registerDomain?version=1&type=xml&key=%s&domain=%s&years=%s&private=%s&auto_renew=%s" % \
+                     (self.token, domain, years, private, auto_renew)
+
+        return self.get(url_suffix)

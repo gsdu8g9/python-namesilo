@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 
 from core.token import get_token
 from .models import APIResponse
-from common.error_codes import error_codes_to_messages
+from ..common.error_codes import error_codes_to_messages
 
 
 class BaseAPIWrapper:
@@ -12,12 +12,12 @@ class BaseAPIWrapper:
         self.__base_url = "http://sandbox.namesilo.com/api/"
         self.token = get_token()
 
-    def __is_response_valid(self, content):
+    @staticmethod
+    def __is_response_valid(content):
         valid = True
         error_message = ""
-        payload = content["namesilo"]["reply"]
 
-        code = int(payload.get("code", None))
+        code = int(content.get("code", None))
 
         if code != 300:
             valid = False
@@ -32,12 +32,12 @@ class BaseAPIWrapper:
             api_request = requests.get(urljoin(self.__base_url, url))
 
             api_response.status_code = api_request.status_code
-            api_response.content = api_request.content
 
             if api_request.status_code not in [200, 201, 202]:
                 api_response.error = "API responded with status code: %s" % api_response.status_code
 
-            api_response.content = xmltodict.parse(api_request.content.decode())
+            content_dict = xmltodict.parse(api_request.content.decode())
+            api_response.content = content_dict.get("namesilo", {}).get("reply", None)
 
             response_valid, error_message = self.__is_response_valid(api_response.content)
             if response_valid:

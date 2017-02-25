@@ -1,0 +1,2 @@
+class DomainServiceException(Exception):
+    pass
