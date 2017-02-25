@@ -1,4 +1,4 @@
-from ._apiwrapper import DomainAPIWrapper
+from .apiwrapper import DomainAPIWrapper
 
 
 class DomainService:
