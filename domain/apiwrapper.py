@@ -20,3 +20,9 @@ class DomainAPIWrapper(BaseAPIWrapper):
         url_suffix = "listDomains?version=1&type=xml&key=%s" % self.token
 
         return self.get(url_suffix)
+
+    def renew_domain(self, domain_name: str, years: int):
+        url_suffix = "renewDomain?version=1&type=xml&key=%s&domain=%s&years=%s" % (self.token, domain_name, years)
+
+        return self.get(url_suffix)
+

@@ -29,3 +29,11 @@ class Contact:
         self.billing = data['billing']
         self.registrant = data['registrant']
         self.technical = data['technical']
+
+
+class ServiceResponse:
+    def __init__(self):
+        self.success = False
+        self.message = ""
+        self.price = 0
+        self.return_value = {}

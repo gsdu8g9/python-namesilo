@@ -69,17 +69,7 @@ class NameSilo:
         content = xmltodict.parse(api_request.content.decode())
         return content
 
-    def renew_domain(self, domain_name: str, years: int=1):
-        """
-        Renew domain name
-        :param domain_name:
-        :param years:
-        :return:
-        """
-        url_extend = "renewDomain?version=1&type=xml&key=%s&domain=%s&years=%s" % (self.__token, domain_name, years)
-        parsed_content = self.__get_content_xml(url_extend)
-        check_error_code(self.__get_error_code(parsed_content))
-        return True
+
 
     def get_prices(self):
         """

@@ -1,5 +1,6 @@
 from .apiwrapper import DomainAPIWrapper
 from .exceptions import DomainServiceException
+from common.models import ServiceResponse
 
 
 class DomainService:
@@ -14,6 +15,16 @@ class DomainService:
         invalid_domains = api_response_content.get("invalid", {}).get("domain", None)
 
         return available_domains, unavailable_domains, invalid_domains
+
+    @staticmethod
+    def _validate_years(years: int):
+        min_years = 1
+        max_years = 10
+
+        if years not in range(min_years, max_years + 1):
+            raise DomainServiceException("Value for years must be between %s and %s" % (min_years, max_years))
+
+        return True
 
     def check_availability(self, domain: str):
         domain_available = False
@@ -32,19 +43,20 @@ class DomainService:
 
     def bulk_check_availability(self, *args: list):
         domains = ",".join(args)
-        response = {}
+        service_response = ServiceResponse()
         api_response = self._api.check_availability(domains)
 
         if api_response.success:
+            service_response.success = True
             available, unavailable, invalid = self._parse_availability_response(api_response.content)
 
             for domain in args:
                 if domain in available:
-                    response[domain] = True
+                    service_response.return_value[domain] = True
                 else:
-                    response[domain] = False
+                    service_response.return_value[domain] = False
 
-            return response
+            return service_response
         else:
             raise DomainServiceException(api_response.error)
 
@@ -57,13 +69,10 @@ class DomainService:
         :param private:
         :return:
         """
-        min_years = 1
-        max_years = 10
+        service_response = ServiceResponse()
 
-        response = {}
+        DomainService._validate_years(years)
 
-        if years not in range(min_years, max_years+1):
-            raise DomainServiceException("Valid value for years is between %s and %s" % (min_years, max_years))
         if auto_renew:
             auto_renew = 1
         else:
@@ -75,23 +84,48 @@ class DomainService:
 
         api_response = self._api.register_domain(domain_name, years, private, auto_renew)
 
-        response["registered"] = api_response.success
-        response["message"] = api_response.content.get("message", "")
+        service_response.success = api_response.success
+        service_response.message = api_response.content.get("message", "")
 
         if api_response.success:
-            response["price"] = api_response.content.get("order_amount", 0)
+            service_response.price = api_response.content.get("order_amount", 0)
         else:
-            response["message"] = api_response.error
+            service_response.message = api_response.error
 
-        return response
+        return service_response
 
     def list_domains(self):
         """
         List all domains registered with current account
         :return: list of registered domains
         """
+        service_response = ServiceResponse()
         api_response = self._api.list_domains()
 
-        domain_list = api_response.content.get("domains", {}).get("domain", [])
+        if api_response.success:
+            service_response.success = True
+            service_response.return_value = api_response.content.get("domains", {}).get("domain", [])
 
-        return domain_list
+        return service_response
+
+    def renew_domain(self, domain_name: str, years: int=1):
+        """
+        Renew domain name
+        :param domain_name:
+        :param years:
+        :return:
+        """
+        service_response = ServiceResponse()
+        DomainService._validate_years(years)
+
+        api_response = self._api.renew_domain(domain_name, years)
+
+        service_response.success = api_response.success
+        service_response.message = api_response.content.get("message", "")
+
+        if api_response.success:
+            service_response.price = api_response.content.get("order_amount", 0)
+        else:
+            service_response.message = api_response.error
+
+        return service_response
