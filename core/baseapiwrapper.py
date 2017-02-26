@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 
 from core.token import get_token
 from .models import APIResponse
-from ..common.error_codes import error_codes_to_messages
+from common.error_codes import error_codes_to_messages
 
 
 class BaseAPIWrapper:
