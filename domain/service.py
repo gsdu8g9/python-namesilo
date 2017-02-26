@@ -84,3 +84,14 @@ class DomainService:
             response["message"] = api_response.error
 
         return response
+
+    def list_domains(self):
+        """
+        List all domains registered with current account
+        :return: list of registered domains
+        """
+        api_response = self._api.list_domains()
+
+        domain_list = api_response.content.get("domains", {}).get("domain", [])
+
+        return domain_list

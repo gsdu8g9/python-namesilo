@@ -15,3 +15,8 @@ class DomainAPIWrapper(BaseAPIWrapper):
                      (self.token, domain, years, private, auto_renew)
 
         return self.get(url_suffix)
+
+    def list_domains(self):
+        url_suffix = "listDomains?version=1&type=xml&key=%s" % self.token
+
+        return self.get(url_suffix)

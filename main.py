@@ -69,20 +69,6 @@ class NameSilo:
         content = xmltodict.parse(api_request.content.decode())
         return content
 
-
-    def list_domains(self):
-        """
-        List all domains registered with current account
-        :return: list of registered domains
-        """
-        domain_list = []
-        url_extend = "listDomains?version=1&type=xml&key=%s" % self.__token
-        parsed_content = self.__get_content_xml(url_extend)
-        check_error_code(self.__get_error_code(parsed_content))
-        return parsed_content['namesilo']['reply']['domains']['domain']
-
-
-
     def renew_domain(self, domain_name: str, years: int=1):
         """
         Renew domain name
