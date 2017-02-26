@@ -8,16 +8,12 @@ class DomainService:
         self._api = DomainAPIWrapper()
 
     @staticmethod
-    def _parse_availability_response(api_response_content: dict):
-
-        available_domains = api_response_content.get("available", {}).get("domain", None)
-        unavailable_domains = api_response_content.get("unavailable", {}).get("domain", None)
-        invalid_domains = api_response_content.get("invalid", {}).get("domain", None)
-
-        return available_domains, unavailable_domains, invalid_domains
-
-    @staticmethod
     def _validate_years(years: int):
+        """
+        Validates if years parameter falls within an accepted range
+        :param years:
+        :return:
+        """
         min_years = 1
         max_years = 10
 
@@ -27,12 +23,17 @@ class DomainService:
         return True
 
     def check_availability(self, domain: str):
+        """
+        Check availability of a single domain
+        :param domain: domain name
+        :return: bool
+        """
         domain_available = False
 
         api_response = self._api.check_availability(domain)
 
         if api_response.success:
-            available, unavailable, invalid = self._parse_availability_response(api_response.content)
+            available = api_response.content.get("available", {}).get("domain", None)
 
             if available == domain:
                 domain_available = True
@@ -42,16 +43,21 @@ class DomainService:
             raise DomainServiceException(api_response.error)
 
     def bulk_check_availability(self, *args: list):
+        """
+        Checks availability for multiple domains
+        :param args: domain names
+        :return: ServiceResponse
+        """
         domains = ",".join(args)
         service_response = ServiceResponse()
         api_response = self._api.check_availability(domains)
 
         if api_response.success:
             service_response.success = True
-            available, unavailable, invalid = self._parse_availability_response(api_response.content)
+            available_domains = api_response.content.get("available", {}).get("domain", None)
 
             for domain in args:
-                if domain in available:
+                if domain in available_domains:
                     service_response.return_value[domain] = True
                 else:
                     service_response.return_value[domain] = False
