@@ -81,20 +81,7 @@ class NameSilo:
         check_error_code(self.__get_error_code(parsed_content))
         return parsed_content['namesilo']['reply']['domains']['domain']
 
-    def register_domain(self, domain_name: str, years: int=1, auto_renew: int=0, private: int=0):
-        """
-        Register domain name
-        :param domain_name: name of domain
-        :param years:
-        :param auto_renew:
-        :param private:
-        :return:
-        """
-        url_extend = "registerDomain?version=1&type=xml&key=%s&domain=%s&years=%s&private=%s&auto_renew=%s" % \
-                     (self.__token, domain_name, years, private, auto_renew)
-        parsed_content = self.__get_content_xml(url_extend)
-        check_error_code(self.__get_error_code(parsed_content))
-        return True
+
 
     def renew_domain(self, domain_name: str, years: int=1):
         """
